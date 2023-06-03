@@ -1,12 +1,20 @@
-import { Controller, Get } from '@nestjs/common';
-import { AppService } from './app.service';
+import {
+  Controller,
+  Get,
+  HttpException,
+  HttpStatus,
+  Query,
+} from '@nestjs/common';
+import { AppService, GetIpInfoParam } from './app.service';
 
 @Controller()
 export class AppController {
   constructor(private readonly appService: AppService) {}
 
   @Get()
-  getHello(): string {
-    return this.appService.getHello();
+  getIpInfo(@Query() query: GetIpInfoParam) {
+    if (!query.ip)
+      throw new HttpException('IP is required', HttpStatus.BAD_REQUEST);
+    return this.appService.getIpInfo(query.ip);
   }
 }
