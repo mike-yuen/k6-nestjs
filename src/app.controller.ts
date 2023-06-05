@@ -1,20 +1,27 @@
 import {
+  Body,
   Controller,
-  Get,
   HttpException,
   HttpStatus,
-  Query,
+  Post,
 } from '@nestjs/common';
-import { AppService, GetIpInfoParam } from './app.service';
+import { AppService } from './app.service';
+
+export class GetUserDto {
+  name: string;
+  email: string;
+  password: string;
+}
 
 @Controller()
 export class AppController {
   constructor(private readonly appService: AppService) {}
 
-  @Get()
-  getIpInfo(@Query() query: GetIpInfoParam) {
-    if (!query.ip)
-      throw new HttpException('IP is required', HttpStatus.BAD_REQUEST);
-    return this.appService.getIpInfo(query.ip);
+  @Post('/user')
+  getUser(@Body() getUserDto: GetUserDto) {
+    const { name, email, password } = getUserDto;
+    if (!(name && email && password))
+      throw new HttpException('Missing params', HttpStatus.BAD_REQUEST);
+    return this.appService.getUser(name, email, password);
   }
 }
